@@ -1,4 +1,4 @@
-package com.vietpq.JobHunter.contoller;
+package com.vietpq.JobHunter.controller;
 
 import com.vietpq.JobHunter.entity.User;
 import com.vietpq.JobHunter.exception.InvalidException;
@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class UserController {

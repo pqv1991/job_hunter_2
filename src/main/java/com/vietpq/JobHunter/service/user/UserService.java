@@ -11,4 +11,5 @@ public interface UserService {
      User getUserById(long id);
      List<User> getAlluser();
      User handleUpdateUser(User reqUser);
+     User handleGetUserByUsername(String username);
 }
