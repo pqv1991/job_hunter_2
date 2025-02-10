@@ -4,6 +4,8 @@ import com.vietpq.JobHunter.entity.RestResponse;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,12 +17,15 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalException {
-    @ExceptionHandler(InvalidException.class)
-    public ResponseEntity<RestResponse<Object>> InvalidException(InvalidException invalidException){
+    @ExceptionHandler(value = {
+            UsernameNotFoundException.class,
+            BadCredentialsException.class
+    })
+    public ResponseEntity<RestResponse<Object>> InvalidException(Exception ex){
         RestResponse<Object>  res = new RestResponse<Object>();
         res.setStatusCode(HttpStatus.BAD_REQUEST.value());
         res.setError("Exception occurs...");
-        res.setMessage(invalidException.getMessage());
+        res.setMessage(ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
     }
 
