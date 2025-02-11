@@ -33,7 +33,23 @@ public class GlobalException {
     public ResponseEntity<RestResponse<Object>> hanleNotNullException(Exception ex){
         RestResponse<Object>  res = new RestResponse<Object>();
         res.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        res.setError("NOT NUll EXCEPTION");
+        res.setMessage(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+    }
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<RestResponse<Object>> hanleNotFoundException(Exception ex){
+        RestResponse<Object>  res = new RestResponse<Object>();
+        res.setStatusCode(HttpStatus.BAD_REQUEST.value());
         res.setError("NOT FOUND EXCEPTION");
+        res.setMessage(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+    }
+    @ExceptionHandler(DuplicatedException.class)
+    public ResponseEntity<RestResponse<Object>> hanleDuplicatedException(Exception ex){
+        RestResponse<Object>  res = new RestResponse<Object>();
+        res.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        res.setError("DUPLICATED EXCEPTION");
         res.setMessage(ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
     }

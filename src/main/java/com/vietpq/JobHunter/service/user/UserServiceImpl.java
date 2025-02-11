@@ -1,7 +1,7 @@
 package com.vietpq.JobHunter.service.user;
 
 import com.vietpq.JobHunter.entity.User;
-import com.vietpq.JobHunter.respository.UserRespository;
+import com.vietpq.JobHunter.respository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +11,10 @@ import java.util.Optional;
 @Service
 public  class UserServiceImpl implements UserService{
 
-    private final UserRespository userRespository;
+    private final UserRepository userRespository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRespository userRespository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRespository, PasswordEncoder passwordEncoder) {
         this.userRespository = userRespository;
         this.passwordEncoder = passwordEncoder;
     }
