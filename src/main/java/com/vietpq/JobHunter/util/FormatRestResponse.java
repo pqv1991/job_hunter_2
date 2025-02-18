@@ -1,6 +1,7 @@
 package com.vietpq.JobHunter.util;
 
 import com.vietpq.JobHunter.entity.RestResponse;
+import com.vietpq.JobHunter.util.anotation.ApiMesage;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -36,7 +37,8 @@ public class FormatRestResponse implements ResponseBodyAdvice<Object> {
         }else {
             // case success
             res.setData(body);
-            res.setMessage("CALL API SUCCESS");
+            ApiMesage mesage = returnType.getMethodAnnotation(ApiMesage.class) ;
+            res.setMessage(mesage != null ? mesage.value() :"CALL API SUCCESS");
         }
         return res;
     }

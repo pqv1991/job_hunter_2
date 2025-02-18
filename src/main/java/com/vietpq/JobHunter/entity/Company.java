@@ -5,8 +5,6 @@ import com.vietpq.JobHunter.util.listener.CompanyListener;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 

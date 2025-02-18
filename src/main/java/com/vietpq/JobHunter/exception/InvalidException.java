@@ -5,6 +5,5 @@ public class InvalidException extends  Exception{
         super(message);
     }
 
-    public static class NotFoundException {
-    }
+
 }

@@ -1,6 +1,8 @@
 package com.vietpq.JobHunter.exception;
 
 import com.vietpq.JobHunter.entity.RestResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,53 +19,56 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalException {
-    @ExceptionHandler(value = {
-            UsernameNotFoundException.class,
-            BadCredentialsException.class
+
+    private static final Logger logger = LoggerFactory.getLogger(GlobalException.class);
+
+    // Xử lý lỗi xác thực (Username không tồn tại, Mật khẩu sai)
+    @ExceptionHandler({UsernameNotFoundException.class, BadCredentialsException.class})
+    public ResponseEntity<RestResponse<Object>> handleAuthenticationException(Exception ex) {
+        return buildResponse(HttpStatus.UNAUTHORIZED, "Authentication Error", ex.getMessage());
+    }
+
+    // Xử lý lỗi hợp lệ dữ liệu
+    @ExceptionHandler({
+            NotNullException.class,
+            InvalidEmailException.class,
+            InvalidPasswordException.class,
+            DuplicatedException.class
     })
-    public ResponseEntity<RestResponse<Object>> InvalidException(Exception ex){
-        RestResponse<Object>  res = new RestResponse<Object>();
-        res.setStatusCode(HttpStatus.BAD_REQUEST.value());
-        res.setError("Exception occurs...");
-        res.setMessage(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+    public ResponseEntity<RestResponse<Object>> handleValidationException(RuntimeException ex) {
+        return buildResponse(HttpStatus.BAD_REQUEST, "Validation Error", ex.getMessage());
     }
 
-    @ExceptionHandler(NotNullException.class)
-    public ResponseEntity<RestResponse<Object>> hanleNotNullException(Exception ex){
-        RestResponse<Object>  res = new RestResponse<Object>();
-        res.setStatusCode(HttpStatus.BAD_REQUEST.value());
-        res.setError("NOT NUll EXCEPTION");
-        res.setMessage(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
-    }
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<RestResponse<Object>> hanleNotFoundException(Exception ex){
-        RestResponse<Object>  res = new RestResponse<Object>();
-        res.setStatusCode(HttpStatus.BAD_REQUEST.value());
-        res.setError("NOT FOUND EXCEPTION");
-        res.setMessage(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
-    }
-    @ExceptionHandler(DuplicatedException.class)
-    public ResponseEntity<RestResponse<Object>> hanleDuplicatedException(Exception ex){
-        RestResponse<Object>  res = new RestResponse<Object>();
-        res.setStatusCode(HttpStatus.BAD_REQUEST.value());
-        res.setError("DUPLICATED EXCEPTION");
-        res.setMessage(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+    // Xử lý lỗi không tìm thấy tài nguyên
+    @ExceptionHandler({NotFoundException.class, NoResourceFoundException.class})
+    public ResponseEntity<RestResponse<Object>> handleNotFoundException(RuntimeException ex) {
+        return buildResponse(HttpStatus.NOT_FOUND, "Resource Not Found", ex.getMessage());
     }
 
+    // Xử lý lỗi khi tham số không hợp lệ
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<RestResponse<Object>> validationError(MethodArgumentNotValidException ex) {
+    public ResponseEntity<RestResponse<Object>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         BindingResult result = ex.getBindingResult();
-        final List<FieldError> fieldErrors = result.getFieldErrors();
-        RestResponse<Object> res = new RestResponse<Object>();
-        res.setStatusCode(HttpStatus.BAD_REQUEST.value());
-        res.setError(ex.getBody().getDetail());
-        List<String> errors = fieldErrors.stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList());
-        res.setMessage(errors.size() > 1 ? errors : errors.get(0));
+        List<String> errors = result.getFieldErrors()
+                .stream()
+                .map(FieldError::getDefaultMessage)
+                .collect(Collectors.toList());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+        return buildResponse(HttpStatus.BAD_REQUEST, "Validation Error", errors);
+    }
+
+    // Xử lý lỗi chung
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<RestResponse<Object>> handleGlobalException(Exception ex) {
+        logger.error("Unexpected error: ", ex); // Log lỗi để debug dễ hơn
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", "An unexpected error occurred.");
+    }
+
+    private ResponseEntity<RestResponse<Object>> buildResponse(HttpStatus status, String error, Object message) {
+        RestResponse<Object> response = new RestResponse<>();
+        response.setStatusCode(status.value());
+        response.setError(error);
+        response.setMessage(message);
+        return ResponseEntity.status(status).body(response);
     }
 }

@@ -1,7 +1,6 @@
 package com.vietpq.JobHunter.util.listener;
 
 import com.vietpq.JobHunter.entity.Company;
-import com.vietpq.JobHunter.exception.message.CompanyMessage;
 import com.vietpq.JobHunter.util.security.SecurityUtil;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;

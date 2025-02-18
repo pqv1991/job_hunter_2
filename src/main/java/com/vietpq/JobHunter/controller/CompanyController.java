@@ -1,8 +1,12 @@
 package com.vietpq.JobHunter.controller;
 
+import com.turkraft.springfilter.boot.Filter;
+import com.vietpq.JobHunter.dto.page.ResultPaginationDTO;
 import com.vietpq.JobHunter.entity.Company;
 import com.vietpq.JobHunter.service.company.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +24,11 @@ public class CompanyController {
     }
     @GetMapping("/companies/{id}")
     public ResponseEntity<Company> getCompany(@PathVariable("id") long id){
-        return ResponseEntity.ok(companyService.fetchCompanyById(id).get());
+        return ResponseEntity.ok(companyService.fetchCompanyById(id));
     }
     @GetMapping("/companies")
-    public ResponseEntity<List<Company>> getAllCompany(){
-        return ResponseEntity.ok(companyService.fetchAllCompany());
+    public ResponseEntity<ResultPaginationDTO> getAllCompany(@Filter Specification<Company> specification, Pageable pageable){
+        return ResponseEntity.ok(companyService.fetchAllCompany(specification,pageable));
     }
     @PutMapping("/companies")
     public ResponseEntity<Company> updateCompany(@RequestBody Company company){

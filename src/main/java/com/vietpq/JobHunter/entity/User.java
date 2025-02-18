@@ -1,7 +1,12 @@
 package com.vietpq.JobHunter.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.vietpq.JobHunter.util.constant.GenderEnum;
+import com.vietpq.JobHunter.util.listener.UserListener;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.Instant;
 
 
 @Entity
@@ -10,6 +15,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EntityListeners(UserListener.class)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,36 +26,17 @@ public class User {
     private String email;
     @Column(name = "password")
     private String password;
-//
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
-//
-//    public String getName() {
-//        return name;
-//    }
-//
-//    public void setName(String name) {
-//        this.name = name;
-//    }
-//
-//    public String getEmail() {
-//        return email;
-//    }
-//
-//    public void setEmail(String email) {
-//        this.email = email;
-//    }
-//
-//    public String getPassword() {
-//        return password;
-//    }
-//
-//    public void setPassword(String password) {
-//        this.password = password;
-//    }
+    private int age;
+    private String address;
+    private String phoneNumber;
+    @Enumerated(EnumType.STRING)
+    private GenderEnum gender;
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String refreshToken;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
+    private Instant createAt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
+    private Instant updateAt;
+    private String createBy;
+    private String updateBy;
 }
